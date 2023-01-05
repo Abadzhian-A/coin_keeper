@@ -3,11 +3,28 @@ import ReactDOM from 'react-dom/client';
 import './index.scss';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { Provider } from 'react-redux';
+import { store } from './Store';
+import './firebase';
+import { getAuth } from 'firebase/auth';
+import { setUser } from './Store/Slices/userSlice';
+import 'antd/dist/antd.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+getAuth().onAuthStateChanged(user => {
+  const { dispatch } = store;
+  dispatch(setUser({
+    email: user.email,
+    id: user.uid,
+    token: user.accessToken,
+  }));
+});
+
 root.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
   </React.StrictMode>
 );
 
